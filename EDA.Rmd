@@ -1,0 +1,84 @@
+---
+title: "MBTA EDA"
+author: "Hao"
+date: "2022-12-17"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message = FALSE)
+```
+```{r}
+library(dplyr)
+library(ggplot2)
+library(fmsb)
+```
+
+
+# Import dataset
+
+The data, download from https://cdn.mbta.com/archive/archived_feeds.txt, includes date: 20211111, 20211209, 20220121, 20220204, 20220304, 20220426, 20220502, 20220603, 20220706, 20220803, 20220916, 20221013.For convennience, I combined 12-calender files into one, calender.txt, and also for routes.
+```{r}
+calendar<-read.csv("calendar.txt")
+routes<-read.csv("routes.txt")
+```
+
+```{r}
+frequence<-count(calendar,service_schedule_typicality)
+barplot(height=frequence$n,
+        names=frequence$service_schedule_typicality,
+        col=c("bisque","lightblue","coral","aquamarine2"),
+        xlab="service_schedule tyoicality",
+        ylab="Count")
+```
+This graph shows the frequency of each type.
+
+
+```{r}
+par(mfrow=c(2,2))
+type_1<-calendar%>%filter(service_schedule_typicality==1)
+f_1<-count(type_1,rating_description)
+barplot(height = f_1$n,names=f_1$rating_description,main = "type 1",col=c("bisque","lightblue","coral","aquamarine2"))
+type_3<-calendar%>%filter(service_schedule_typicality==3)
+f_2<-count(type_3,rating_description)
+barplot(height = f_2$n,names=f_2$rating_description,main = "type 3",col=c("bisque","lightblue","coral","aquamarine2"))
+type_4<-calendar%>%filter(service_schedule_typicality==4)
+f_3<-count(type_4,rating_description)
+barplot(height = f_3$n,names=f_3$rating_description,main = "type 4",col=c("bisque","lightblue","coral","aquamarine2"))
+type_5<-calendar%>%filter(service_schedule_typicality==5)
+f_4<-count(type_5,rating_description)
+barplot(height = f_4$n,names=f_4$rating_description,main = "type 5",col=c("bisque","lightblue","coral","aquamarine2"))
+```
+This graph shows the frequency of different seasons for each type.
+
+```{r}
+route_id<-c("Red","Orange","Blue","Green-B","Green-C","Green-D","Green-E")
+color<-c("burlywood1","cadetblue1","darkkhaki","darkslategray1","darkseagreen4","darkolivegreen1")
+par(mfrow=c(2,2))
+type_1<-routes[routes$route_pattern_typicality==1,]
+type_1<-type_1[type_1$route_id%in%route_id,]
+r_1<-count(type_1,route_id)
+barplot(height = r_1$n,names=r_1$route_id,main = "type 1",col=color)
+
+
+type_2<-routes[routes$route_pattern_typicality==2,]
+type_2<-type_2[type_2$route_id%in%route_id,]
+r_2<-count(type_2,route_id)
+barplot(height = r_2$n,names=r_2$route_id,main = "type 2",col=color,xlim = c(0,50),ylim=c(0,50))
+
+
+type_3<-routes[routes$route_pattern_typicality==3,]
+type_3<-type_3[type_3$route_id%in%route_id,]
+r_3<-count(type_3,route_id)
+barplot(height = r_3$n,names=r_3$route_id,main = "type 3",col=color)
+
+
+type_4<-routes[routes$route_pattern_typicality==4,]
+type_4<-type_4[type_4$route_id%in%route_id,]
+r_4<-count(type_4,route_id)
+barplot(height = r_4$n,names=r_4$route_id,main = "type 4",col=color)
+```
+This graph shows the frequencies of the different routes of each type. I only select some common lines, including "Red","Orange","Blue","Green-B","Green-C","Green-D","Green-E".
+
+
+
